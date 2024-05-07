@@ -5,6 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, dbx, User
 from forms import RegisterForm, LoginForm, CSRFProtectForm
+from werkzeug.exceptions import Unauthorized
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -73,13 +74,14 @@ def display_user_login():
             pwd=password
         )
 
-        # FIXME: what happens if you put in a wrong password????
-        session["username"] = login_user.username
+    # FIXME:handle wrong username or password input
+        if login_user:
+            session["username"] = login_user.username
+            return redirect(f"/users/{login_user.username}")
 
-        print("logged in a new user", login_user)
-        print("!!!!!!!!!!!!!!!SESSION", session)
-
-        return redirect(f"/users/{login_user.username}")
+        else:
+            flash("Please enter a valid username or password.")
+            return render_template("/user_login.jinja", form=form)
 
     else:
         return render_template("/user_login.jinja", form=form)
@@ -93,16 +95,21 @@ def show_user_page(username):
 
     if "username" not in session:
         flash("Please log in!")
-
-        return redirect("/")  # TODO: take user to the login page
+        return redirect("/login")
 
     else:
-        # FIXME:Give feedback to the user - raise unauthorized
+        # TODO: raise unauthorized for dupes
+        # FIXME:Give feedback to the user
         session_username = session["username"]
-        q = db.select(User).where(User.username == session_username)
-        user = dbx(q).scalars().one()
 
-        return render_template("user_info.jinja", user=user, form=form)
+        if session_username == username:
+            q = db.select(User).where(User.username == session_username)
+            user = dbx(q).scalars().one()
+
+            return render_template("user_info.jinja", user=user, form=form)
+
+        else:
+            raise Unauthorized()
 
 
 @app.post('/logout')

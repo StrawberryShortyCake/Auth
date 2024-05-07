@@ -66,7 +66,8 @@ class User(db.Model):
         """
 
         q = db.select(cls).filter_by(username=username)
-        u = dbx(q).scalar_one_or_none() #can't use get or 404, db.session.get => use user instead
+        # can't use get or 404, db.session.get => use user instead
+        u = dbx(q).scalar_one_or_none()
 
         if u and bcrypt.check_password_hash(u.hashed_password, pwd):
             return u
@@ -74,27 +75,27 @@ class User(db.Model):
             return False
 
 
-class Note(db.Model):
-    """ Creating a Note Class """
+# class Note(db.Model):
+#     """ Creating a Note Class """
 
-    __tablename__ = "notes"
+#     __tablename__ = "notes"
 
-    id = db.mapped_column(
-        db.String(30),
-        nullable=False
-    )
+#     id = db.mapped_column(
+#         db.String(30),
+#         nullable=False
+#     )
 
-    title = db.mapped_column(
-        db.String(30),
-        nullable=False
-    )
+#     title = db.mapped_column(
+#         db.String(30),
+#         nullable=False
+#     )
 
-    content = db.mapped_column(
-        db.String(30),
-        nullable=False
-    )
+#     content = db.mapped_column(
+#         db.String(30),
+#         nullable=False
+#     )
 
-    owner_username = db.mapped_column(
-        db.String(30),
-        nullable=False
-    )
+#     owner_username = db.mapped_column(
+#         db.String(30),
+#         nullable=False
+#     )
