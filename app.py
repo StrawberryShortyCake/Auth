@@ -91,7 +91,7 @@ def show_user_page(username):
     if "username" not in session:
         flash("Please log in!")
 
-        return redirect("/")
+        return redirect("/")  # TODO: take user to the login page
 
     else:
         session_username = session["username"]

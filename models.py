@@ -72,3 +72,29 @@ class User(db.Model):
             return u
         else:
             return False
+
+
+class Note(db.Model):
+    """ Creating a Note Class """
+
+    __tablename__ = "notes"
+
+    id = db.mapped_column(
+        db.String(30),
+        nullable=False
+    )
+
+    title = db.mapped_column(
+        db.String(30),
+        nullable=False
+    )
+
+    content = db.mapped_column(
+        db.String(30),
+        nullable=False
+    )
+
+    owner_username = db.mapped_column(
+        db.String(30),
+        nullable=False
+    )
