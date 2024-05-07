@@ -1,0 +1,12 @@
+{% extends "base.jinja" %}
+{% block content %}
+
+<h2>Login Your Account</h2>
+<form id="register-user" method="POST" action="/login">
+
+  {% include '/_form.jinja' %}
+
+  <button type="submit">Log In</button>
+</form>
+
+{% endblock %}

@@ -4,7 +4,7 @@ from flask import Flask, redirect, render_template, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, dbx, User
-from forms import RegisterForm
+from forms import RegisterForm, LoginForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -25,8 +25,8 @@ def redirect_register():
 
 @app.route('/register', methods=["GET", "POST"])
 def display_register_user():
-    """Show form that will register/create a user.
-    This form accepts a username, password, email, first_name, and last_name."""
+    """Produce register form or handle register.
+    Register form accepts a username, password, email, first_name, and last_name."""
 
     form = RegisterForm()
 
@@ -55,3 +55,30 @@ def display_register_user():
 
     else:
         return render_template("/user_register.jinja", form=form)
+
+
+@app.route('/login', method=["GET", "POST"])
+def display_user_login():
+    """ Produce login form or handle login
+    This form should accept a username and a password."""
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        login_user = User.authenticate(
+            username=username,
+            pwd=password
+        )
+
+        session["username"] = login_user.username
+
+        print("logged in a new user", login_user)
+        print("!!!!!!!!!!!!!!!SESSION", session)
+
+        return redirect(f"/users/{login_user.username}")
+
+    else:
+        return render_template("/user_login.jinja", form=form)
