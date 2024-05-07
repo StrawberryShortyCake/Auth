@@ -57,7 +57,7 @@ def display_register_user():
         return render_template("/user_register.jinja", form=form)
 
 
-@app.route('/login', method=["GET", "POST"])
+@app.route('/login', methods=["GET", "POST"])
 def display_user_login():
     """ Produce login form or handle login
     This form should accept a username and a password."""

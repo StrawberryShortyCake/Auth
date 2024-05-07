@@ -68,7 +68,7 @@ class User(db.Model):
         q = db.select(cls).filter_by(username=username)
         u = dbx(q).scalar_one_or_none()
 
-        if u and bcrypt.check_password_hash(u.passowrd, pwd):
+        if u and bcrypt.check_password_hash(u.hashed_password, pwd):
             return u
         else:
             return False
