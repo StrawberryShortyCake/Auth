@@ -17,7 +17,7 @@ class User(db.Model):
     username = db.mapped_column(
         db.String(20),
         primary_key=True,
-        unique=True
+        unique=True  # either get rid of it or nullable equals to false
     )
 
     # will store hashed password
@@ -66,7 +66,7 @@ class User(db.Model):
         """
 
         q = db.select(cls).filter_by(username=username)
-        u = dbx(q).scalar_one_or_none()
+        u = dbx(q).scalar_one_or_none() #can't use get or 404, db.session.get => use user instead
 
         if u and bcrypt.check_password_hash(u.hashed_password, pwd):
             return u
