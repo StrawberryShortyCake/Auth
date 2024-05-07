@@ -1,0 +1,27 @@
+{% extends "base.jinja" %}
+    {% block content %}
+    <div>
+        <h1>{{ user.first_name }} {{ user.last_name }}</h1><br>
+        <p>Email: {{ user.email }}</p><br>
+    </div>
+
+    <div>
+        <h3>Notes</h3><br>
+
+        {% for note in notes %}
+        <div>
+            <button>Edit</button><br>
+            <button>Delete</button><br>
+            <p>{{ note.title }}</p><br>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <div>
+        <button class="my-2">Add Note</button><br>
+        <button class="my-2">Delete User</button><br>
+    </div>
+
+
+    {% endblock %}

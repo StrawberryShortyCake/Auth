@@ -82,3 +82,19 @@ def display_user_login():
 
     else:
         return render_template("/user_login.jinja", form=form)
+
+
+@app.get("/users/<username>")
+def show_user_page(username):
+
+    if "username" not in session:
+        flash("Please log in!")
+
+        return redirect("/")
+
+    else:
+        session_username = session["username"]
+        q = db.select(User).where(User.username == session_username)
+        user = dbx(q).scalars().one()
+
+        return render_template("user_info.jinja", user=user)
