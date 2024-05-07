@@ -4,7 +4,7 @@ from flask import Flask, redirect, render_template, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, dbx, User
-from forms import RegisterForm, LoginForm
+from forms import RegisterForm, LoginForm, CSRFProtectForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -86,6 +86,7 @@ def display_user_login():
 
 @app.get("/users/<username>")
 def show_user_page(username):
+    """Display page that shows information about that user"""
 
     if "username" not in session:
         flash("Please log in!")
@@ -98,3 +99,15 @@ def show_user_page(username):
         user = dbx(q).scalars().one()
 
         return render_template("user_info.jinja", user=user)
+
+
+@app.post('/logout')
+def log_out_of_account():
+    """Logs out of user account"""
+
+    form = CSRFProtectForm()
+
+    if form.validate_on_submit():
+        session.pop('username', None)
+
+    return redirect('/')

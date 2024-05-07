@@ -61,7 +61,7 @@ class User(db.Model):
 
     @classmethod
     def authenticate(cls, username, pwd):
-        """ Calidate that the user exists and the password is correct
+        """ Validate that the user exists and the password is correct
         Return user instance if valid; else return False.
         """
 
