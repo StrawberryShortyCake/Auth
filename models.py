@@ -9,7 +9,7 @@ dbx = db.session.execute
 bcrypt = Bcrypt()
 
 
-class User(db.model):
+class User(db.Model):
     """ Creating a User classs. """
 
     __tablename__ = "users"
@@ -52,7 +52,7 @@ class User(db.model):
         # creating an instance of the user with the username and hashed password
         return cls(
             username=username,
-            pwd=hashed,
+            hashed_password=hashed,
             email=email,
             first_name=first_name,
             last_name=last_name)
