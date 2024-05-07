@@ -47,7 +47,7 @@ def display_register_user():
         db.session.add(new_user)
         db.session.commit()
 
-        session["username"] = new_user.username
+        session["username"] = new_user.username  # GLOBAL_VARIABLE
 
         print("add a new user", new_user)
 
@@ -73,6 +73,7 @@ def display_user_login():
             pwd=password
         )
 
+        # FIXME: what happens if you put in a wrong password????
         session["username"] = login_user.username
 
         print("logged in a new user", login_user)
@@ -88,17 +89,20 @@ def display_user_login():
 def show_user_page(username):
     """Display page that shows information about that user"""
 
+    form = CSRFProtectForm()
+
     if "username" not in session:
         flash("Please log in!")
 
         return redirect("/")  # TODO: take user to the login page
 
     else:
+        # FIXME:Give feedback to the user - raise unauthorized
         session_username = session["username"]
         q = db.select(User).where(User.username == session_username)
         user = dbx(q).scalars().one()
 
-        return render_template("user_info.jinja", user=user)
+        return render_template("user_info.jinja", user=user, form=form)
 
 
 @app.post('/logout')
@@ -109,5 +113,8 @@ def log_out_of_account():
 
     if form.validate_on_submit():
         session.pop('username', None)
+        print('!!!!!!session', session)
+
+    # else raise unauthorized
 
     return redirect('/')
