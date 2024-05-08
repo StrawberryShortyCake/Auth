@@ -17,7 +17,6 @@ class User(db.Model):
     username = db.mapped_column(
         db.String(20),
         primary_key=True,
-        unique=True  # either get rid of it or nullable equals to false
     )
 
     # will store hashed password
@@ -40,6 +39,12 @@ class User(db.Model):
     last_name = db.mapped_column(
         db.String(30),
         nullable=False
+    )
+
+    notes = db.relationship(
+        "Note",
+        back_populates="owner",
+        cascade="all, delete-orphan"
     )
 
     # start_register
@@ -75,27 +80,35 @@ class User(db.Model):
             return False
 
 
-# class Note(db.Model):
-#     """ Creating a Note Class """
+class Note(db.Model):
+    """ Creating a Note Class """
 
-#     __tablename__ = "notes"
+    __tablename__ = "notes"
 
-#     id = db.mapped_column(
-#         db.String(30),
-#         nullable=False
-#     )
+    id = db.mapped_column(
+        db.Integer,
+        db.Identity(),
+        primary_key=True
+    )
 
-#     title = db.mapped_column(
-#         db.String(30),
-#         nullable=False
-#     )
+    title = db.mapped_column(
+        db.String(100),
+        nullable=False
+    )
 
-#     content = db.mapped_column(
-#         db.String(30),
-#         nullable=False
-#     )
+    content = db.mapped_column(
+        db.Text,
+        nullable=False
+    )
 
-#     owner_username = db.mapped_column(
-#         db.String(30),
-#         nullable=False
-#     )
+    owner_username = db.mapped_column(
+        db.String(20),
+        db.ForeignKey('users.username', ondelete="CASCADE",
+                      onupdate="CASCADE"),
+        nullable=False
+    )
+
+    owner = db.relationship(
+        "User",
+        back_populates="notes"
+    )
