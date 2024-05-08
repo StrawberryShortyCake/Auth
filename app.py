@@ -3,8 +3,8 @@ import os
 from flask import Flask, redirect, render_template, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from models import db, dbx, User
-from forms import RegisterForm, LoginForm, CSRFProtectForm
+from models import db, dbx, User, Note
+from forms import RegisterForm, LoginForm, CSRFProtectForm, AddNoteForm
 from werkzeug.exceptions import Unauthorized
 
 app = Flask(__name__)
@@ -106,7 +106,10 @@ def show_user_page(username):
             q = db.select(User).where(User.username == session_username)
             user = dbx(q).scalars().one()
 
-            return render_template("user_info.jinja", user=user, form=form)
+            return render_template("user_info.jinja",
+                                   user=user,
+                                   form=form,
+                                   notes=user.notes)
 
         else:
             raise Unauthorized()
@@ -125,3 +128,47 @@ def log_out_of_account():
     # else raise unauthorized
 
     return redirect('/')
+
+
+@app.post("/users/<username>/delete")
+def delete_user(username):
+    """Remove the user from the database.
+    Log the user out and redirect to /."""
+
+    session_username = session["username"]
+
+    if session_username == username:
+        user = db.get_or_404(User, username)
+        session.pop('username', None)
+        db.session.delete(user)
+        db.session.commit()
+
+    return redirect('/')
+
+
+@app.route('/users/<username>/notes/add', methods=['GET', "POST"])
+def display_and_handle_add_note(username):
+    """Produce note form or handle add note.
+    Note form accepts a title, content."""
+
+    form = AddNoteForm()
+
+    if form.validate_on_submit():
+        title = form.title.data
+        content = form.content.data
+
+        new_note = Note(
+            title=title,
+            content=content,
+            owner_username=username
+        )
+
+        db.session.add(new_note)
+        db.session.commit()
+
+        flash(f'Added {new_note.title} note!')
+
+        return redirect(f"/users/{username}")
+
+    else:
+        return render_template("", form=form)

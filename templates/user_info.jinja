@@ -19,8 +19,11 @@
 </div>
 
 <div>
-  <button class="my-2">Add Note</button><br>
-  <button class="my-2">Delete User</button><br>
+  <form>
+    <button class="my-2">Add Note</button><br>
+
+    <button class="my-2" formmethod="POST" formaction="/users/{{ user.username }}/delete"> Delete User</button><br>
+  </form>
 </div>
 
 
